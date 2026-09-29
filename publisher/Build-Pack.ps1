@@ -44,7 +44,7 @@ try {
 
     New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
     $zipPath = Join-Path $releaseDir $zipName
-    Compress-Archive -LiteralPath (Join-Path $stage '*') -DestinationPath $zipPath -CompressionLevel Optimal
+    Get-ChildItem -LiteralPath $stage -Force | Compress-Archive -DestinationPath $zipPath -CompressionLevel Optimal
 
     $manifest = [ordered]@{
         name             = 'Medieval Forge'
