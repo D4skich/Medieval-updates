@@ -78,6 +78,9 @@ try {
 if ($manifest.minecraftVersion -ne '1.20.1' -or $manifest.forgeVersion -ne $ForgeVersion) {
     throw 'Получена несовместимая версия сборки.'
 }
+if ([IO.Path]::GetFileName([string]$manifest.zipFile) -ne [string]$manifest.zipFile -or -not $manifest.managedPaths) {
+    throw 'Получен некорректный manifest.json.'
+}
 
 $installed = $null
 if (Test-Path -LiteralPath $ManifestPath) {
@@ -99,6 +102,9 @@ if (-not $installed -or $installed.sha256 -ne $manifest.sha256) {
         New-Item -ItemType Directory -Path $GameDir -Force | Out-Null
 
         foreach ($name in $manifest.managedPaths) {
+            if ([IO.Path]::GetFileName([string]$name) -ne [string]$name) {
+                throw 'В manifest.json найден недопустимый путь.'
+            }
             $target = Join-Path $GameDir $name
             if (Test-Path -LiteralPath $target) {
                 Remove-Item -LiteralPath $target -Recurse -Force
